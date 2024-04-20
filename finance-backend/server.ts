@@ -1,12 +1,13 @@
-import express from 'express'
-import expensesRoutes from './routes/expenses'
+import express from "express";
+import expensesRoutes from "./routes/expenses";
 
-const app = express()
+const app = express();
+app.use(express.json());
 
-app.use('/expenses', expensesRoutes)
+app.use("/expenses", expensesRoutes);
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port http://localhost:${PORT}`)
-})
+  console.log(`Example app listening on port http://localhost:${PORT}`);
+});
