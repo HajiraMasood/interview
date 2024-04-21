@@ -6,7 +6,7 @@ import {
   DialogTitle,
   ModalDialog,
 } from "@mui/joy";
-import { IExpense } from "../types/Expenses";
+import { IExpense } from "../types/Expense";
 import { useEffect, useState } from "react";
 
 interface IModalProps {
@@ -27,19 +27,19 @@ const DeleteExpenseModal = ({
   const [amount, setAmount] = useState(data?.amount);
   const [description, setDescription] = useState(data?.description);
   const [date, setDate] = useState(data?.date);
-  const [id, setId] = useState(data?.id);
+  const [uuid, setId] = useState(data?.uuid);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setAmount(data?.amount);
     setDescription(data?.description);
     setDate(data?.date);
-    setId(data?.id);
+    setId(data?.uuid);
   }, [data]);
 
   const deleteExpense = () => {
     setLoading(true);
     const body = {
-      id,
+      uuid,
     };
     fetch("/expenses", {
       method: "DELETE",
@@ -72,8 +72,8 @@ const DeleteExpenseModal = ({
       <ModalDialog size="md">
         <ModalClose />
         <DialogTitle sx={{ paddingTop: "20px" }}>
-          Do you want to delete this {description} expense with {amount}$ spent
-          on {date}
+          Do you want to delete this {description} expense with{" "}
+          {amount?.toString()}$ spent on {date}
         </DialogTitle>
         <DialogContent sx={{ marginTop: "20px" }}>
           <Button

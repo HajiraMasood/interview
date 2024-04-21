@@ -10,7 +10,7 @@ import {
   Input,
   Button,
 } from "@mui/joy";
-import { IExpense } from "../types/Expenses";
+import { IExpense } from "../types/Expense";
 import { useEffect, useState } from "react";
 
 interface IModalProps {
@@ -31,13 +31,13 @@ const ModifyExpenseModal = ({
   const [amount, setAmount] = useState(data?.amount);
   const [description, setDescription] = useState(data?.description);
   const [date, setDate] = useState(data?.date);
-  const [id, setId] = useState(data?.id);
+  const [uuid, setId] = useState(data?.uuid);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setAmount(data?.amount);
     setDescription(data?.description);
     setDate(data?.date);
-    setId(data?.id);
+    setId(data?.uuid);
   }, [data]);
 
   const saveExpenseUpdate = () => {
@@ -46,7 +46,7 @@ const ModifyExpenseModal = ({
       amount,
       description,
       date,
-      id,
+      uuid,
     };
     fetch("/expenses", {
       method: "PUT",
@@ -114,8 +114,9 @@ const ModifyExpenseModal = ({
             <Input
               startDecorator={"$"}
               required
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
+              type="number"
+              value={amount?.toString()}
+              onChange={(event) => setAmount(Number(event.target.value))}
             />
           </FormControl>
           <FormControl sx={{ marginBottom: "10px" }}>

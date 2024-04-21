@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 const AddExpenses: React.FC = () => {
   const navigate = useNavigate();
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [alert, setAlert] = useState({ show: false, message: "" });
@@ -87,7 +87,7 @@ const AddExpenses: React.FC = () => {
             value={amount}
             onChange={(event) => {
               resetAlert();
-              setAmount(event.target.value);
+              setAmount(Number(event.target.value));
             }}
           />
         </FormControl>

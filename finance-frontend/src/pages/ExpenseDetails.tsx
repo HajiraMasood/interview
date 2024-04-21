@@ -18,13 +18,15 @@ const ExpenseDetails = () => {
     fetch(`/expenses/${expenseId}`)
       .then((response) => response.json())
       .then((body) => {
-        setExpense({
-          description: body.data.description,
-          date: `${dateToTimeAgo(body.data.date)} ( ${moment(
-            body.data.date
-          ).format("ddd, MMM DD on h:mm")} )`,
-          amount: body.data.amount,
-        });
+        if (body.data)
+          setExpense({
+            description: body.data.description,
+            date: `${dateToTimeAgo(body.data.date)} ( ${moment(
+              body.data.date
+            ).format("ddd, MMM DD on h:mm")} )`,
+            amount: body.data.amount,
+          });
+        else setExpense({ description: "", amount: "", date: "" });
       });
   }, [expenseId]);
 

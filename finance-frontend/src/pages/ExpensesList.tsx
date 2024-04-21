@@ -7,12 +7,13 @@ import {
   Tooltip,
   FormControl,
   Input,
+  Typography,
 } from "@mui/joy";
 import { useEffect, useState } from "react";
 
 import React from "react";
 import ModifyExpenseModal from "../components/ModifyExpenseModal";
-import { IExpense } from "../types/Expenses";
+import { IExpense } from "../types/Expense";
 import DeleteExpenseModal from "../components/DeleteExpenseModal";
 import { useNavigate } from "react-router-dom";
 import { dateToTimeAgo } from "../utils/dateToTimeAgo";
@@ -28,12 +29,13 @@ const ExpensesList: React.FC = () => {
   const [searchKey, setSearchKey] = useState("");
   const [sum, setSum] = useState(0);
 
-  const [selectedExpense, setSelectedExpense] = useState({
-    amount: "",
+  const [selectedExpense, setSelectedExpense] = useState<IExpense>({
+    amount: 0,
     description: "",
-    id: "",
+    uuid: "",
     date: "",
   });
+  // eslint-disable-next-line array-callback-return
   const filteredExpenses = expenses?.filter((expense) => {
     if (searchKey === "") {
       return expense;
@@ -43,14 +45,16 @@ const ExpensesList: React.FC = () => {
       return expense;
     }
   });
-  const amounts = filteredExpenses.map((expense: IExpense) =>
-    Number(expense.amount)
-  );
+  const amounts = filteredExpenses.map((expense: IExpense) => expense.amount);
 
   useEffect(() => {
-    if (amounts.length > 0)
-      setSum(amounts.reduce((acc: any, row: any) => acc + row));
-    else setSum(0);
+    if (amounts.length > 0) {
+      const accumulated = amounts.reduce(
+        (acc: number, row: number) => acc + row,
+        0
+      );
+      setSum(Number(accumulated.toFixed(2)));
+    } else setSum(0);
   }, [amounts]);
 
   useEffect(() => {
@@ -116,31 +120,51 @@ const ExpensesList: React.FC = () => {
       >
         <Table aria-labelledby="ExpensesTable" stickyHeader hoverRow sx={{}}>
           <thead>
-            <tr>
-              <th style={{ width: "var(--Table-firstColumnWidth)" }}>
+            <tr key={"table-header"}>
+              <th
+                key={"Description"}
+                style={{ width: "var(--Table-firstColumnWidth)" }}
+              >
                 Description
               </th>
-              <th style={{ width: 200 }}>Date</th>
-              <th style={{ width: 200 }}>Amount&nbsp;($)</th>
-              <th style={{ width: 200 }}></th>
+              <th key={"Date"} style={{ width: 200 }}>
+                Date
+              </th>
+              <th key={"Amount"} style={{ width: 200 }}>
+                Amount&nbsp;($)
+              </th>
+              <th key={"Operations"} style={{ width: 200 }}></th>
             </tr>
           </thead>
           <tbody>
             {filteredExpenses.map((expense) => (
-              <tr key={expense.id}>
+              <tr key={expense.uuid}>
                 <td>
-                  <Link
-                    onClick={() => {
-                      navigate(`/expenses/${expense.id}`);
-                    }}
+                  <Tooltip
+                    title={`show details of ${
+                      expense.description[0].toUpperCase() +
+                      expense.description.substring(1)
+                    }`}
+                    variant="soft"
                   >
-                    {expense.description[0].toUpperCase() +
-                      expense.description.substring(1)}
-                  </Link>
+                    <Link
+                      onClick={() => {
+                        navigate(`/expenses/${expense.uuid}`);
+                      }}
+                    >
+                      {expense.description[0].toUpperCase() +
+                        expense.description.substring(1)}
+                    </Link>
+                  </Tooltip>
                 </td>
 
-                <td>{dateToTimeAgo(expense.date)}</td>
-                <td>{expense.amount}</td>
+                <td>
+                  {" "}
+                  <Tooltip title={expense.date} variant="soft">
+                    <Typography>{dateToTimeAgo(expense.date)}</Typography>
+                  </Tooltip>
+                </td>
+                <td>$ {expense.amount.toFixed(2).toString()}</td>
                 <td>
                   <Box sx={{ display: "flex", gap: 1 }}>
                     <Tooltip title="Modify" variant="soft">

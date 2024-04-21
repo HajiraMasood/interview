@@ -1,103 +1,73 @@
-import { Box, Sheet, Button, IconButton } from "@mui/joy";
-import { useEffect, useState } from "react";
+import {
+  Box,
+  IconButton,
+  Dropdown,
+  Menu,
+  MenuButton,
+  MenuItem,
+  Typography,
+} from "@mui/joy";
+import { useEffect, useMemo, useState } from "react";
+import { getDaysInMonth } from "date-fns";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import React from "react";
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { IExpense } from "../types/Expenses";
+import { IExpense } from "../types/Expense";
 import { useNavigate } from "react-router-dom";
-
-import { Bar } from "react-chartjs-2";
-import { faker } from "@faker-js/faker";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import { Months } from "../utils/months";
+import { ArrowDownward } from "@mui/icons-material";
 
 const Charts: React.FC = () => {
   const navigate = useNavigate();
-  const [expenses, setExpenses] = useState<IExpense[] | []>([]);
-  const [searchKey, setSearchKey] = useState("");
+  const [expenses, setExpenses] = useState<IExpense[]>([]);
+  const event = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(event.getMonth());
 
-  const options = {
-    plugins: {
-      title: {
-        display: true,
-        text: "Chart.js Bar Chart - Stacked",
+  const groupedExpenses = useMemo(() => {
+    const groupedExpenses = expenses.reduce(
+      (
+        previousValue: Record<string, number>,
+        expense: IExpense
+      ): Record<string, number> => {
+        previousValue[expense.date] =
+          (previousValue[expense.date] || 0) + expense.amount;
+        return previousValue;
       },
-    },
-    responsive: true,
-    scales: {
-      x: {
-        stacked: true,
-      },
-      y: {
-        stacked: true,
-      },
-    },
-  };
+      {}
+    );
 
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-  ];
-
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: "Dataset 1",
-        data: labels.map(() =>
-          faker.datatype.number({ min: -1000, max: 1000 })
-        ),
-        backgroundColor: "rgb(255, 99, 132)",
-      },
-      {
-        label: "Dataset 2",
-        data: labels.map(() =>
-          faker.datatype.number({ min: -1000, max: 1000 })
-        ),
-        backgroundColor: "rgb(75, 192, 192)",
-      },
-      {
-        label: "Dataset 3",
-        data: labels.map(() =>
-          faker.datatype.number({ min: -1000, max: 1000 })
-        ),
-        backgroundColor: "rgb(53, 162, 235)",
-      },
-    ],
-  };
-
-  const filteredExpenses = expenses?.filter((expense) => {
-    if (searchKey === "") {
-      return expense;
-    } else if (
-      expense.description.toLowerCase().includes(searchKey.toLowerCase())
-    ) {
-      return expense;
+    const now = new Date();
+    now.setMonth(selectedMonth);
+    const lastDayOfTheMonth = getDaysInMonth(now);
+    let dailyExpenses = [];
+    for (let day = 0; day < lastDayOfTheMonth; day++) {
+      const currentDateString = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        day + 1
+      )
+        .toISOString()
+        .substring(0, 10);
+      dailyExpenses.push({
+        date: currentDateString,
+        amount: groupedExpenses[currentDateString] || 0,
+      });
     }
-  });
+
+    return dailyExpenses;
+  }, [expenses, selectedMonth]);
 
   useEffect(() => {
     fetch("/expenses")
@@ -108,16 +78,17 @@ const Charts: React.FC = () => {
   }, []);
 
   return (
-    <Box>
+    <Box width={"100%"}>
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row-reverse",
-          alignItems: "right",
-          marginBottom: "20px",
+          flexGrow: 1,
+          justifyContent: "space-between",
+          paddingY: "10px",
+          paddingX: "30px",
         }}
       >
-        <Box width={"100%"}>
+        <Box>
           <IconButton
             onClick={() => {
               navigate("/");
@@ -127,29 +98,52 @@ const Charts: React.FC = () => {
             Back
           </IconButton>
         </Box>
-
-        <Button
-          sx={{ marginRight: "20px" }}
-          size="md"
-          variant="soft"
-          onClick={() => {}}
+        <Box>
+          <Typography color="primary" level="h3" component="h2">
+            Showing Expenses of {Months[selectedMonth]} in Dollars
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 1.5,
+            alignItems: "center",
+          }}
         >
-          Filters
-        </Button>
+          <Dropdown>
+            <MenuButton endDecorator={<ArrowDownward />}>
+              Select Month
+            </MenuButton>
+            <Menu>
+              {Months.map((month, monthIndex) => {
+                return (
+                  <MenuItem
+                    key={monthIndex}
+                    onClick={() => setSelectedMonth(monthIndex)}
+                  >
+                    {month}
+                  </MenuItem>
+                );
+              })}
+            </Menu>
+          </Dropdown>
+        </Box>
       </Box>
 
-      <Sheet
-        className="ExpensesTableContainer"
-        variant="outlined"
-        sx={{
-          width: "100%",
-          borderRadius: "sm",
-          flexShrink: 1,
-          minHeight: 0,
-        }}
-      >
-        <Bar options={options} data={data} />
-      </Sheet>
+      <ResponsiveContainer width="95%" height={450}>
+        <BarChart
+          margin={{ top: 20, right: 20, left: 20, bottom: 5 }}
+          data={groupedExpenses}
+        >
+          <CartesianGrid />
+          <XAxis dataKey="date" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="amount" stackId="a" fill="#82ca9d" />
+        </BarChart>
+      </ResponsiveContainer>
     </Box>
   );
 };

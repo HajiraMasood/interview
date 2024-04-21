@@ -3,7 +3,7 @@ import { Navigate, RouteObject } from "react-router-dom";
 import MainLayout from "../components/MainLayout";
 import ExpensesList from "../pages/ExpensesList";
 import AddExpenses from "../pages/AddExpenses";
-import ExpenseDetails from "../components/ExpenseDetails";
+import ExpenseDetails from "../pages/ExpenseDetails";
 import Charts from "../pages/Charts";
 
 export const routes = (): RouteObject[] => {
