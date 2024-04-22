@@ -82,7 +82,7 @@ const AddExpenses: React.FC = () => {
         <FormControl sx={{ marginBottom: "10px" }}>
           <FormLabel>Amount</FormLabel>
           <Input
-            startDecorator={"$"}
+            startDecorator={"€"}
             required
             value={amount}
             onChange={(event) => {

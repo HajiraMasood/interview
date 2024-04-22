@@ -131,7 +131,7 @@ const ExpensesList: React.FC = () => {
                 Date
               </th>
               <th key={"Amount"} style={{ width: 200 }}>
-                Amount&nbsp;($)
+                Amount&nbsp;(€)
               </th>
               <th key={"Operations"} style={{ width: 200 }}></th>
             </tr>
@@ -164,7 +164,7 @@ const ExpensesList: React.FC = () => {
                     <Typography>{dateToTimeAgo(expense.date)}</Typography>
                   </Tooltip>
                 </td>
-                <td>$ {expense.amount.toFixed(2).toString()}</td>
+                <td>€ {expense.amount.toFixed(2).toString()}</td>
                 <td>
                   <Box sx={{ display: "flex", gap: 1 }}>
                     <Tooltip title="Modify" variant="soft">
@@ -204,7 +204,7 @@ const ExpensesList: React.FC = () => {
             <tr>
               <td></td>
               <th scope="row">Totals</th>
-              <td>{sum}</td>
+              <td>€ {sum}</td>
               <td></td>
             </tr>
           </tfoot>

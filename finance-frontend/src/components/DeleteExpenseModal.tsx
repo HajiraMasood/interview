@@ -73,7 +73,7 @@ const DeleteExpenseModal = ({
         <ModalClose />
         <DialogTitle sx={{ paddingTop: "20px" }}>
           Do you want to delete this {description} expense with{" "}
-          {amount?.toString()}$ spent on {date}
+          {amount?.toString()}€ spent on {date}
         </DialogTitle>
         <DialogContent sx={{ marginTop: "20px" }}>
           <Button

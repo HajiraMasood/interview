@@ -53,7 +53,7 @@ const ExpenseDetails = () => {
             <div>
               <Typography level="body-xs">Spent:</Typography>
               <Typography fontSize="lg" fontWeight="lg">
-                ${expense.amount}
+                €{expense.amount}
               </Typography>
             </div>
           </CardContent>

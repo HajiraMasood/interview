@@ -112,7 +112,7 @@ const ModifyExpenseModal = ({
           <FormControl sx={{ marginBottom: "10px" }}>
             <FormLabel>Amount</FormLabel>
             <Input
-              startDecorator={"$"}
+              startDecorator={"€"}
               required
               type="number"
               value={amount?.toString()}

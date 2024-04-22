@@ -100,7 +100,7 @@ const Charts: React.FC = () => {
         </Box>
         <Box>
           <Typography color="primary" level="h3" component="h2">
-            Showing Expenses of {Months[selectedMonth]} in Dollars
+            Showing Expenses of {Months[selectedMonth]} in Euros
           </Typography>
         </Box>
         <Box
