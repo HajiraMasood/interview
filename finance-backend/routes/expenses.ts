@@ -84,7 +84,7 @@ router.post("/add", async (req, res) => {
 });
 
 router.delete("/", async (req, res) => {
-  if (!req.body || !req.body.id) {
+  if (!req.body || !req.body.uuid) {
     return res.status(400).send("Invalid request payload");
   }
   const data = await readFile("./db/expenses.json", "utf8");
@@ -92,7 +92,7 @@ router.delete("/", async (req, res) => {
   const expenses = JSON.parse(data).expenses;
 
   const updateExpensesArray = expenses.filter(
-    (expense: { id: any }) => expense.id !== req.body.id
+    (expense: { uuid: any }) => expense.uuid !== req.body.uuid
   );
   await writeFile(
     "./db/expenses.json",
